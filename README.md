@@ -1,4 +1,4 @@
-# climetadata
+# metarip
 
 A lightweight CLI utility to recursively scrub metadata from image, document, and audio files while preserving file content and quality.
 
@@ -20,7 +20,7 @@ make
 ## Usage
 
 ```bash
-./climetadata /path/to/target-directory
+./metarip /path/to/target-directory
 ```
 
 The utility walks the specified directory tree and scrubs metadata in-place.
