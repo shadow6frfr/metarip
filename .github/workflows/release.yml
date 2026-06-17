@@ -3,7 +3,7 @@ name: Build and Release Binaries
 on:
   push:
     tags:
-      - 'v*' # Triggers whenever you push a tag like v1.0, v1.1, etc.
+      - 'v*'
 
 jobs:
   build:
@@ -14,20 +14,27 @@ jobs:
         include:
           - os: ubuntu-latest
             artifact_name: metarip-linux
-            asset_name: metarip-linux
           - os: windows-latest
             artifact_name: metarip-windows.exe
-            asset_name: metarip-windows.exe
           - os: macos-latest
             artifact_name: metarip-macos
-            asset_name: metarip-macos
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    # This fixes windows-latest by setting up a pristine GCC compiler environment
+    - name: Set up MSYS2 / GCC (Windows Only)
+      if: matrix.os == 'windows-latest'
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: mingw-w64-x86_64-gcc
+
+    # Compiles cleanly using the MSYS2 environment we just configured
     - name: Build Binary (Windows Static)
       if: matrix.os == 'windows-latest'
+      shell: msys2 {0}
       run: |
         gcc -std=c17 -O3 -Wall -Wextra -static src/main.c src/scanner.c src/worker.c src/queue.c -Iinclude -lws2_32 -o ${{ matrix.artifact_name }}
 
@@ -41,7 +48,7 @@ jobs:
         fi
 
     - name: Upload Artifacts to Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: ${{ matrix.artifact_name }}
       env:
