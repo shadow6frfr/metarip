@@ -3,7 +3,7 @@ CFLAGS = -std=c17 -O3 -Wall -Wextra -pthread
 LDFLAGS = -pthread
 SRC = src/main.c src/scanner.c src/worker.c src/queue.c
 OBJ = $(SRC:.c=.o)
-TARGET = climetadata
+TARGET = metarip
 TEST_SRC = tests/test_runner.c
 TEST_BIN = tests/test_runner
 

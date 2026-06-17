@@ -1,6 +1,6 @@
 # Binaries (Linux/macOS and Windows variants)
-climetadata
-climetadata.exe
+metarip
+metarip.exe
 tests/test_runner
 tests/test_runner.exe
 
