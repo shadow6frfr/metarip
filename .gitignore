@@ -1,0 +1,16 @@
+# Binaries (Linux/macOS and Windows variants)
+climetadata
+climetadata.exe
+tests/test_runner
+tests/test_runner.exe
+
+# Object files
+*.o
+src/*.o
+
+# Temporary files created by the worker threads
+*.tmp
+
+# Operating system artifacts
+.DS_Store
+Thumbs.db
