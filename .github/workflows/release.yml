@@ -1,0 +1,44 @@
+name: Build and Release Binaries
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers whenever you push a tag like v1.0, v1.1, etc.
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: climetadata-linux
+            asset_name: climetadata-linux
+          - os: windows-latest
+            artifact_name: climetadata-windows.exe
+            asset_name: climetadata-windows.exe
+          - os: macos-latest
+            artifact_name: climetadata-macos
+            asset_name: climetadata-macos
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build Binary (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        gcc -std=c17 -O3 -Wall -Wextra src/main.c src/scanner.c src/worker.c src/queue.c -Iinclude -lws2_32 -o climetadata-windows.exe
+
+    - name: Build Binary (Linux/macOS)
+      if: matrix.os != 'windows-latest'
+      run: |
+        gcc -std=c17 -O3 -Wall -Wextra src/main.c src/scanner.c src/worker.c src/queue.c -Iinclude -pthread -o ${{ matrix.artifact_name }}
+
+    - name: Upload Artifacts to Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ${{ matrix.artifact_name }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
