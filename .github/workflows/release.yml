@@ -13,28 +13,32 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            artifact_name: climetadata-linux
-            asset_name: climetadata-linux
+            artifact_name: metarip-linux
+            asset_name: metarip-linux
           - os: windows-latest
-            artifact_name: climetadata-windows.exe
-            asset_name: climetadata-windows.exe
+            artifact_name: metarip-windows.exe
+            asset_name: metarip-windows.exe
           - os: macos-latest
-            artifact_name: climetadata-macos
-            asset_name: climetadata-macos
+            artifact_name: metarip-macos
+            asset_name: metarip-macos
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Build Binary (Windows)
+    - name: Build Binary (Windows Static)
       if: matrix.os == 'windows-latest'
       run: |
-        gcc -std=c17 -O3 -Wall -Wextra src/main.c src/scanner.c src/worker.c src/queue.c -Iinclude -lws2_32 -o climetadata-windows.exe
+        gcc -std=c17 -O3 -Wall -Wextra -static src/main.c src/scanner.c src/worker.c src/queue.c -Iinclude -lws2_32 -o metarip-windows.exe
 
-    - name: Build Binary (Linux/macOS)
+    - name: Build Binary (Linux Static / macOS Standard)
       if: matrix.os != 'windows-latest'
       run: |
-        gcc -std=c17 -O3 -Wall -Wextra src/main.c src/scanner.c src/worker.c src/queue.c -Iinclude -pthread -o ${{ matrix.artifact_name }}
+        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+          gcc -std=c17 -O3 -Wall -Wextra -static src/main.c src/scanner.c src/worker.c src/queue.c -Iinclude -pthread -o ${{ matrix.artifact_name }}
+        else
+          gcc -std=c17 -O3 -Wall -Wextra src/main.c src/scanner.c src/worker.c src/queue.c -Iinclude -pthread -o ${{ matrix.artifact_name }}
+        fi
 
     - name: Upload Artifacts to Release
       uses: softprops/action-gh-release@v1
