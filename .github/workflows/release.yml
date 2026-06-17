@@ -29,7 +29,7 @@ jobs:
     - name: Build Binary (Windows Static)
       if: matrix.os == 'windows-latest'
       run: |
-        gcc -std=c17 -O3 -Wall -Wextra -static src/main.c src/scanner.c src/worker.c src/queue.c -Iinclude -lws2_32 -o metarip-windows.exe
+        gcc -std=c17 -O3 -Wall -Wextra -static src/main.c src/scanner.c src/worker.c src/queue.c -Iinclude -lws2_32 -o ${{ matrix.artifact_name }}
 
     - name: Build Binary (Linux Static / macOS Standard)
       if: matrix.os != 'windows-latest'
